@@ -2,6 +2,11 @@ spring:
   application:
     name: cv-match
 
+  # Lê o arquivo .env (se existir) como fonte de propriedades.
+  # Funciona rodando tanto da raiz do projeto quanto da pasta backend/.
+  config:
+    import: "optional:file:.env[.properties],optional:file:../.env[.properties]"
+
   # Valores vêm de variáveis de ambiente; o que está depois do ":" é o padrão local
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/cvmatch}
@@ -27,3 +32,12 @@ management:
     web:
       exposure:
         include: health,info
+
+cvmatch:
+  jwt:
+    # Padrão SOMENTE para desenvolvimento. Em produção, defina JWT_SECRET.
+    secret: ${JWT_SECRET:dev-only-secret-troque-em-producao-0123456789}
+    expiracao-minutos: ${JWT_EXPIRATION_MINUTES:60}
+  cors:
+    # Separe vários endereços por vírgula
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
