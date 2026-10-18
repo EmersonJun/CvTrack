@@ -1,0 +1,10 @@
+# Normaliza finais de linha (evita diffs "fantasma" entre Windows e Linux)
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+mvnw text eol=lf
+
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jar binary
