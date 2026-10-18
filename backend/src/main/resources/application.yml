@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: cv-match
+
+  # Valores vêm de variáveis de ambiente; o que está depois do ":" é o padrão local
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cvmatch}
+    username: ${POSTGRES_USER:cvmatch}
+    password: ${POSTGRES_PASSWORD:cvmatch}
+
+  jpa:
+    # O schema é responsabilidade do Flyway; o Hibernate só valida
+    hibernate:
+      ddl-auto: validate
+    # Evita consultas ao banco disparadas pela camada web (anti-pattern)
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
