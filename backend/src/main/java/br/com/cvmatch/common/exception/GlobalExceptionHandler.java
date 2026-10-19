@@ -13,6 +13,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.Instant;
@@ -74,7 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Ocorreu um erro inesperado. Tente novamente mais tarde.");
     }
 
-    /** Erros do @Valid: devolve a lista de campos inválidos para o frontend exibir. */
+    /** Erros do @Valid em um @RequestBody: devolve a lista de campos inválidos. */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
@@ -84,12 +86,46 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(erro -> new CampoInvalido(erro.getField(), erro.getDefaultMessage()))
                 .toList();
 
-        ProblemDetail corpo = ex.getBody();
+        return handleExceptionInternal(ex, dadosInvalidos(ex.getBody(), campos), headers, status, request);
+    }
+
+    /**
+     * Erros de validação em parâmetros soltos (@RequestParam, @PathVariable),
+     * ex.: o "titulo" do upload. Mesmo formato do erro acima, para o frontend
+     * tratar tudo de um jeito só.
+     */
+    @Override
+    protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex,
+                                                                            HttpHeaders headers,
+                                                                            HttpStatusCode status,
+                                                                            WebRequest request) {
+        List<CampoInvalido> campos = ex.getParameterValidationResults().stream()
+                .flatMap(resultado -> resultado.getResolvableErrors().stream()
+                        .map(erro -> new CampoInvalido(
+                                resultado.getMethodParameter().getParameterName(),
+                                erro.getDefaultMessage())))
+                .toList();
+
+        return handleExceptionInternal(ex, dadosInvalidos(ex.getBody(), campos), headers, status, request);
+    }
+
+    /** Arquivo maior que spring.servlet.multipart.max-file-size -> 413. */
+    @Override
+    protected ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex,
+                                                                          HttpHeaders headers,
+                                                                          HttpStatusCode status,
+                                                                          WebRequest request) {
+        ProblemDetail corpo = problema(HttpStatus.PAYLOAD_TOO_LARGE, "Arquivo muito grande",
+                "O arquivo deve ter no máximo 5 MB");
+        return handleExceptionInternal(ex, corpo, headers, HttpStatus.PAYLOAD_TOO_LARGE, request);
+    }
+
+    private ProblemDetail dadosInvalidos(ProblemDetail corpo, List<CampoInvalido> campos) {
         corpo.setTitle("Dados inválidos");
         corpo.setDetail("Um ou mais campos estão inválidos");
         corpo.setProperty("timestamp", Instant.now());
         corpo.setProperty("campos", campos);
-        return handleExceptionInternal(ex, corpo, headers, status, request);
+        return corpo;
     }
 
     private ProblemDetail problema(HttpStatus status, String titulo, String detalhe) {
