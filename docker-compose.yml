@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cvmatch-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cvmatch}
+      POSTGRES_USER: ${POSTGRES_USER:-cvmatch}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cvmatch}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # backend e frontend serão adicionados nos próximos commits
+
+volumes:
+  postgres-data:

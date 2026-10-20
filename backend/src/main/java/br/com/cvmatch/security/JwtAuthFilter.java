@@ -22,7 +22,7 @@ import java.io.IOException;
  * Ele é criado manualmente dentro do SecurityConfig.
  */
 @RequiredArgsConstructor
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class ;JwtAuthFilter extends OncePerRequestFilter {
 
     private static final String PREFIXO = "Bearer ";
 

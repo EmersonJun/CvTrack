@@ -1,0 +1,39 @@
+<mat-toolbar class="barra">
+  <a class="marca" routerLink="/dashboard">
+    <mat-icon>fact_check</mat-icon>
+    <span>CV Match</span>
+  </a>
+
+  <nav class="navegacao">
+    @for (item of menu; track item.rota) {
+      <a mat-button [routerLink]="item.rota" routerLinkActive="ativo">
+        <mat-icon>{{ item.icone }}</mat-icon>
+        <span class="rotulo">{{ item.rotulo }}</span>
+      </a>
+    }
+  </nav>
+
+  <span class="espaco"></span>
+
+  <button mat-button [matMenuTriggerFor]="menuUsuario" aria-label="Menu do usuário">
+    <mat-icon>account_circle</mat-icon>
+    <span class="rotulo">{{ auth.usuario()?.nome ?? 'Minha conta' }}</span>
+  </button>
+
+  <mat-menu #menuUsuario="matMenu">
+    @if (auth.usuario(); as usuario) {
+      <div class="dados-usuario">
+        <strong>{{ usuario.nome }}</strong>
+        <small>{{ usuario.email }}</small>
+      </div>
+    }
+    <button mat-menu-item (click)="sair()">
+      <mat-icon>logout</mat-icon>
+      <span>Sair</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<main>
+  <router-outlet />
+</main>
