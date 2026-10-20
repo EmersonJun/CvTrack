@@ -12,4 +12,6 @@ public interface VagaRepository extends JpaRepository<Vaga, UUID> {
     Optional<Vaga> findByIdAndUsuarioId(UUID id, UUID usuarioId);
 
     List<Vaga> findAllByUsuarioIdOrderByCriadoEmDesc(UUID usuarioId);
+
+    long countByUsuarioId(UUID usuarioId);
 }
