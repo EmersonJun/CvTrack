@@ -20,7 +20,7 @@ export const erroInterceptor: HttpInterceptorFn = (requisicao, proximo) => {
           sessao.limpar();
           notificacao.erro('Sua sessão expirou. Faça login novamente.');
           router.navigate(['/login'], { queryParams: { retorno: router.url } });
-        } else if (erro.status === 0 || erro.status >= 500) {
+        } else if (erro.status === 0 || (erro.status >= 500 && erro.status !== 502)) {
           notificacao.erro(mensagemDeErro(erro));
         }
       }

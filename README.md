@@ -42,7 +42,7 @@ O **CV Match** recebe um currículo em PDF e a descrição de uma vaga e devolve
 - [x] Histórico, comparação e dashboard
 - [x] Swagger, Dockerfile e CI
 - [x] Frontend: estrutura, autenticação e layout
-- [ ] Frontend: currículos, vagas e análises
+- [x] Frontend: currículos, vagas e análises
 - [ ] Frontend: histórico, comparação e dashboard
 - [ ] Docker Compose completo e documentação final
 

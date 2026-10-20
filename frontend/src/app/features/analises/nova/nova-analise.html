@@ -1,0 +1,81 @@
+<section class="pagina">
+  <div class="pagina-cabecalho">
+    <h1>Nova análise</h1>
+  </div>
+
+  @if (carregando()) {
+    <div class="carregando-pagina"><mat-spinner diameter="40" /></div>
+  } @else if (faltaCadastro()) {
+    <div class="estado-vazio">
+      <mat-icon>checklist</mat-icon>
+      <p>Para analisar, você precisa de pelo menos um currículo e uma vaga.</p>
+      <div class="atalhos">
+        @if (grupos().length === 0) {
+          <a mat-flat-button routerLink="/curriculos">Enviar currículo</a>
+        }
+        @if (vagas().length === 0) {
+          <a mat-flat-button routerLink="/vagas">Cadastrar vaga</a>
+        }
+      </div>
+    </div>
+  } @else {
+    <mat-card appearance="outlined" class="cartao-analise">
+      <mat-card-content>
+        @if (analisando()) {
+          <div class="progresso" aria-live="polite">
+            <mat-spinner diameter="56" />
+            <p class="dica">{{ dica() }}</p>
+            <p class="texto-secundario">A análise pode levar até 2 minutos, dependendo do provedor de IA.</p>
+            <mat-progress-bar mode="indeterminate" />
+          </div>
+        } @else {
+          @if (erro()) {
+            <div class="alerta-erro" role="alert">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{ erro() }}</span>
+            </div>
+          }
+
+          <form [formGroup]="formulario" (ngSubmit)="analisar()" class="campos" novalidate>
+            <mat-form-field appearance="outline">
+              <mat-label>Currículo</mat-label>
+              <mat-select formControlName="curriculoId">
+                @for (grupo of grupos(); track grupo.titulo) {
+                  <mat-optgroup [label]="grupo.titulo">
+                    @for (versao of grupo.versoes; track versao.id) {
+                      <mat-option [value]="versao.id">
+                        {{ grupo.titulo }} · v{{ versao.versao }} · {{ versao.criadoEm | date: 'dd/MM/yyyy' }}
+                      </mat-option>
+                    }
+                  </mat-optgroup>
+                }
+              </mat-select>
+              @if (formulario.controls.curriculoId.hasError('required')) {
+                <mat-error>Escolha um currículo</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Vaga</mat-label>
+              <mat-select formControlName="vagaId">
+                @for (vaga of vagas(); track vaga.id) {
+                  <mat-option [value]="vaga.id">
+                    {{ vaga.titulo }}{{ vaga.empresa ? ' · ' + vaga.empresa : '' }}
+                  </mat-option>
+                }
+              </mat-select>
+              @if (formulario.controls.vagaId.hasError('required')) {
+                <mat-error>Escolha uma vaga</mat-error>
+              }
+            </mat-form-field>
+
+            <button mat-flat-button type="submit" class="acao-principal">
+              <mat-icon>auto_awesome</mat-icon>
+              Analisar aderência
+            </button>
+          </form>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

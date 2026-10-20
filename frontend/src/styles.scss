@@ -121,3 +121,59 @@ a {
   margin-right: 8px;
   vertical-align: middle;
 }
+
+.botao-perigo {
+  --mdc-filled-button-container-color: var(--mat-sys-error);
+  --mat-button-filled-container-color: var(--mat-sys-error);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-error);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-error);
+}
+
+.estado-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.carregando-pagina {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.lista-cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.chip-presente {
+  --mat-chip-elevated-container-color: #e8f5e9;
+  --mdc-chip-elevated-container-color: #e8f5e9;
+  --mat-chip-label-text-color: #1b5e20;
+  --mdc-chip-label-text-color: #1b5e20;
+}
+
+.chip-ausente {
+  --mat-chip-elevated-container-color: var(--mat-sys-error-container);
+  --mdc-chip-elevated-container-color: var(--mat-sys-error-container);
+  --mat-chip-label-text-color: var(--mat-sys-on-error-container);
+  --mdc-chip-label-text-color: var(--mat-sys-on-error-container);
+}
+
+.campos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px !important;
+}

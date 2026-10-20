@@ -1,0 +1,84 @@
+.envio {
+  margin-bottom: 24px;
+
+  h2 {
+    font: var(--mat-sys-title-large);
+    margin: 0 0 4px;
+  }
+}
+
+.formulario-envio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 16px;
+  margin-top: 16px;
+
+  .campo-titulo {
+    flex: 1 1 280px;
+  }
+
+  button[type='submit'] {
+    height: 56px;
+  }
+}
+
+.seletor-arquivo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+
+  button {
+    height: 56px;
+  }
+}
+
+.nome-arquivo {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grupos {
+  display: grid;
+  gap: 16px;
+}
+
+.versoes {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+  }
+}
+
+.numero-versao {
+  min-width: 40px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  text-align: center;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font: var(--mat-sys-label-large);
+}
+
+.dados-versao {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

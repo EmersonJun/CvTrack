@@ -53,8 +53,28 @@ main {
 }
 
 @media (max-width: 720px) {
+  .barra {
+    gap: 0;
+    padding: 0 8px;
+  }
+
+  .marca {
+    margin-right: 4px;
+  }
+
   .marca span,
   .rotulo {
     display: none;
+  }
+
+  .navegacao a,
+  .barra > button {
+    min-width: 0;
+    padding: 0 10px;
+  }
+
+  .navegacao mat-icon,
+  .barra > button mat-icon {
+    margin: 0;
   }
 }

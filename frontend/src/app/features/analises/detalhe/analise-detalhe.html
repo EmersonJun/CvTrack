@@ -1,0 +1,104 @@
+<section class="pagina">
+  @if (analise(); as a) {
+    <div class="pagina-cabecalho">
+      <div>
+        <h1>Resultado da análise</h1>
+        <p class="texto-secundario subtitulo">
+          {{ a.curriculo.titulo }} (v{{ a.curriculo.versao }}) ×
+          {{ a.vaga.titulo }}{{ a.vaga.empresa ? ' · ' + a.vaga.empresa : '' }}
+        </p>
+      </div>
+      <a
+        mat-stroked-button
+        [routerLink]="['/analises/nova']"
+        [queryParams]="{ vagaId: a.vaga.id }"
+      >
+        <mat-icon>refresh</mat-icon>
+        Analisar outra versão
+      </a>
+    </div>
+
+    <div class="grade">
+      <mat-card appearance="outlined" class="cartao-nota">
+        <mat-card-content>
+          <app-nota-indicador [nota]="a.nota" [tamanho]="160" />
+          @if (a.resumo) {
+            <p class="resumo">{{ a.resumo }}</p>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Palavras-chave da vaga</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <h3>Presentes no currículo ({{ a.palavrasPresentes.length }})</h3>
+          <mat-chip-set aria-label="Palavras presentes">
+            @for (termo of a.palavrasPresentes; track termo) {
+              <mat-chip class="chip-presente"><mat-icon matChipAvatar>check</mat-icon>{{ termo }}</mat-chip>
+            } @empty {
+              <span class="texto-secundario">Nenhuma</span>
+            }
+          </mat-chip-set>
+
+          <h3>Ausentes no currículo ({{ a.palavrasAusentes.length }})</h3>
+          <mat-chip-set aria-label="Palavras ausentes">
+            @for (termo of a.palavrasAusentes; track termo) {
+              <mat-chip class="chip-ausente"><mat-icon matChipAvatar>close</mat-icon>{{ termo }}</mat-chip>
+            } @empty {
+              <span class="texto-secundario">Nenhuma. Ótimo sinal!</span>
+            }
+          </mat-chip-set>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="icone-forte">thumb_up</mat-icon>
+          <mat-card-title>Pontos fortes</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ul class="lista">
+            @for (item of a.pontosFortes; track item) {
+              <li>{{ item }}</li>
+            } @empty {
+              <li class="texto-secundario">Nenhum ponto forte identificado.</li>
+            }
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="icone-sugestao">lightbulb</mat-icon>
+          <mat-card-title>Sugestões de melhoria</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ul class="lista">
+            @for (item of a.sugestoes; track item) {
+              <li>{{ item }}</li>
+            } @empty {
+              <li class="texto-secundario">Nenhuma sugestão.</li>
+            }
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <p class="metadados texto-secundario">
+      Analisado em {{ a.criadoEm | date: "dd/MM/yyyy 'às' HH:mm" }} por {{ a.provedorIa }} ({{ a.modelo }})
+      @if (a.tempoProcessamentoMs) {
+        em {{ a.tempoProcessamentoMs / 1000 | number: '1.0-1' }} s
+      }
+    </p>
+  } @else if (erro()) {
+    <div class="estado-vazio">
+      <mat-icon>search_off</mat-icon>
+      <p>{{ erro() }}</p>
+      <a mat-flat-button routerLink="/analises/nova">Fazer uma análise</a>
+    </div>
+  } @else {
+    <div class="carregando-pagina"><mat-spinner diameter="40" /></div>
+  }
+</section>

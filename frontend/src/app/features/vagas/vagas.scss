@@ -1,0 +1,17 @@
+.cartao-vaga {
+  display: flex;
+  flex-direction: column;
+
+  mat-card-content {
+    flex: 1;
+  }
+}
+
+.resumo-descricao {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-line;
+  color: var(--mat-sys-on-surface-variant);
+}

@@ -1,0 +1,46 @@
+<section class="pagina">
+  <div class="pagina-cabecalho">
+    <h1>Vagas</h1>
+    <button mat-flat-button (click)="abrirFormulario()">
+      <mat-icon>add</mat-icon>
+      Nova vaga
+    </button>
+  </div>
+
+  @if (carregando()) {
+    <div class="carregando-pagina"><mat-spinner diameter="40" /></div>
+  } @else if (vagas().length === 0) {
+    <div class="estado-vazio">
+      <mat-icon>work_outline</mat-icon>
+      <p>Cadastre a primeira vaga colando a descrição que você encontrou.</p>
+    </div>
+  } @else {
+    <div class="lista-cartoes">
+      @for (vaga of vagas(); track vaga.id) {
+        <mat-card appearance="outlined" class="cartao-vaga">
+          <mat-card-header>
+            <mat-card-title>{{ vaga.titulo }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ vaga.empresa ?? 'Empresa não informada' }} · {{ vaga.criadoEm | date: 'dd/MM/yyyy' }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="resumo-descricao">{{ vaga.descricao }}</p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-icon-button (click)="abrirFormulario(vaga)" matTooltip="Editar" aria-label="Editar vaga">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="excluir(vaga)" matTooltip="Excluir" aria-label="Excluir vaga">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+            <a mat-button [routerLink]="['/analises/nova']" [queryParams]="{ vagaId: vaga.id }">
+              <mat-icon>analytics</mat-icon>
+              Analisar
+            </a>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

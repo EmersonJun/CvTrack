@@ -1,0 +1,117 @@
+<section class="pagina">
+  <div class="pagina-cabecalho">
+    <h1>Currículos</h1>
+  </div>
+
+  <mat-card appearance="outlined" class="envio">
+    <mat-card-content>
+      <h2>Enviar currículo</h2>
+      <p class="texto-secundario">
+        Use o mesmo título para criar uma nova versão e acompanhar a evolução da nota.
+      </p>
+
+      <form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario-envio" novalidate>
+        <mat-form-field appearance="outline" class="campo-titulo">
+          <mat-label>Título</mat-label>
+          <input matInput formControlName="titulo" [matAutocomplete]="sugestoes" placeholder="Ex.: CV Backend Java" />
+          <mat-autocomplete #sugestoes="matAutocomplete">
+            @for (titulo of titulos(); track titulo) {
+              <mat-option [value]="titulo">{{ titulo }}</mat-option>
+            }
+          </mat-autocomplete>
+          @if (formulario.controls.titulo.hasError('required')) {
+            <mat-error>Informe um título</mat-error>
+          } @else if (formulario.controls.titulo.hasError('maxlength')) {
+            <mat-error>Máximo de 100 caracteres</mat-error>
+          } @else if (formulario.controls.titulo.hasError('servidor')) {
+            <mat-error>{{ formulario.controls.titulo.getError('servidor') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="seletor-arquivo">
+          <input #campoArquivo type="file" accept="application/pdf,.pdf" hidden (change)="selecionarArquivo($event)" />
+          <button mat-stroked-button type="button" (click)="campoArquivo.click()">
+            <mat-icon>upload_file</mat-icon>
+            {{ arquivo() ? 'Trocar PDF' : 'Escolher PDF' }}
+          </button>
+          @if (arquivo(); as selecionado) {
+            <span class="nome-arquivo">{{ selecionado.name }}</span>
+          }
+        </div>
+
+        <button mat-flat-button type="submit" [disabled]="enviando()">
+          <mat-icon>send</mat-icon>
+          Enviar
+        </button>
+      </form>
+
+      @if (erroArquivo()) {
+        <div class="alerta-erro" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ erroArquivo() }}</span>
+        </div>
+      }
+      @if (enviando()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @if (carregando()) {
+    <div class="carregando-pagina"><mat-spinner diameter="40" /></div>
+  } @else if (grupos().length === 0) {
+    <div class="estado-vazio">
+      <mat-icon>description</mat-icon>
+      <p>Você ainda não enviou nenhum currículo.</p>
+    </div>
+  } @else {
+    <div class="grupos">
+      @for (grupo of grupos(); track grupo.titulo) {
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>{{ grupo.titulo }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ grupo.versoes.length }} {{ grupo.versoes.length === 1 ? 'versão' : 'versões' }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <ul class="versoes">
+              @for (versao of grupo.versoes; track versao.id) {
+                <li>
+                  <span class="numero-versao">v{{ versao.versao }}</span>
+                  <div class="dados-versao">
+                    <span>{{ versao.nomeArquivo }}</span>
+                    <small class="texto-secundario">
+                      {{ versao.criadoEm | date: 'dd/MM/yyyy HH:mm' }} ·
+                      {{ versao.totalCaracteres | number }} caracteres
+                    </small>
+                  </div>
+                  <a
+                    mat-icon-button
+                    [routerLink]="['/analises/nova']"
+                    [queryParams]="{ curriculoId: versao.id }"
+                    matTooltip="Analisar com uma vaga"
+                    aria-label="Analisar com uma vaga"
+                  >
+                    <mat-icon>analytics</mat-icon>
+                  </a>
+                  <button mat-icon-button (click)="verTexto(versao.id)" matTooltip="Ver texto extraído" aria-label="Ver texto extraído">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    (click)="excluir(versao.id, grupo.titulo, versao.versao)"
+                    matTooltip="Excluir versão"
+                    aria-label="Excluir versão"
+                  >
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </li>
+              }
+            </ul>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

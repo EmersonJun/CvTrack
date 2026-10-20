@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>{{ vaga ? 'Editar vaga' : 'Nova vaga' }}</h2>
+
+<form [formGroup]="formulario" (ngSubmit)="salvar()" novalidate>
+  <mat-dialog-content class="campos">
+    @if (erro()) {
+      <div class="alerta-erro" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ erro() }}</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Título da vaga</mat-label>
+      <input matInput formControlName="titulo" placeholder="Ex.: Desenvolvedor Java Júnior" />
+      @if (formulario.controls.titulo.hasError('required')) {
+        <mat-error>Informe o título</mat-error>
+      } @else if (formulario.controls.titulo.hasError('maxlength')) {
+        <mat-error>Máximo de 150 caracteres</mat-error>
+      } @else if (formulario.controls.titulo.hasError('servidor')) {
+        <mat-error>{{ formulario.controls.titulo.getError('servidor') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Empresa (opcional)</mat-label>
+      <input matInput formControlName="empresa" />
+      @if (formulario.controls.empresa.hasError('maxlength')) {
+        <mat-error>Máximo de 150 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descrição da vaga</mat-label>
+      <textarea
+        matInput
+        formControlName="descricao"
+        rows="12"
+        placeholder="Cole aqui a descrição completa: atividades, requisitos e diferenciais"
+      ></textarea>
+      <mat-hint align="end">{{ formulario.controls.descricao.value.length }} / 20000</mat-hint>
+      @if (formulario.controls.descricao.hasError('required')) {
+        <mat-error>Cole a descrição da vaga</mat-error>
+      } @else if (formulario.controls.descricao.hasError('minlength')) {
+        <mat-error>A descrição precisa ter pelo menos 50 caracteres</mat-error>
+      } @else if (formulario.controls.descricao.hasError('maxlength')) {
+        <mat-error>Máximo de 20000 caracteres</mat-error>
+      } @else if (formulario.controls.descricao.hasError('servidor')) {
+        <mat-error>{{ formulario.controls.descricao.getError('servidor') }}</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="salvando()">Salvar</button>
+  </mat-dialog-actions>
+</form>

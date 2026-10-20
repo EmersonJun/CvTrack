@@ -60,6 +60,13 @@ describe('erroInterceptor', () => {
     expect(notificacao.erro).toHaveBeenCalledWith('Erro interno');
   });
 
+  it('erro 502 da IA deve ser tratado pela própria tela', () => {
+    http.post('/api/analises', {}).subscribe({ error: () => undefined });
+    controlador.expectOne('/api/analises').flush({}, { status: 502, statusText: 'Bad Gateway' });
+
+    expect(notificacao.erro).not.toHaveBeenCalled();
+  });
+
   it('erro 400 deve ser tratado pela própria tela', () => {
     http.post('/api/vagas', {}).subscribe({ error: () => undefined });
     controlador.expectOne('/api/vagas').flush({}, { status: 400, statusText: 'Bad Request' });
