@@ -8,6 +8,8 @@ import br.com.cvmatch.analise.service.AnaliseService;
 import br.com.cvmatch.analise.service.ComparacaoService;
 import br.com.cvmatch.common.dto.PaginaResponse;
 import br.com.cvmatch.security.UsuarioAutenticado;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.UUID;
 
+@Tag(name = "Análises", description = "Análise de aderência com IA, histórico e comparação")
 @RestController
 @RequestMapping("/api/analises")
 @RequiredArgsConstructor
@@ -34,6 +37,7 @@ public class AnaliseController {
     private final AnaliseService analiseService;
     private final ComparacaoService comparacaoService;
 
+    @Operation(summary = "Analisa um currículo contra uma vaga usando IA")
     @PostMapping
     public ResponseEntity<AnaliseResponse> analisar(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                                     @Valid @RequestBody NovaAnaliseRequest requisicao) {
@@ -45,6 +49,7 @@ public class AnaliseController {
         return ResponseEntity.created(location).body(analise);
     }
 
+    @Operation(summary = "Histórico paginado de análises, da mais recente para a mais antiga")
     @GetMapping
     public PaginaResponse<AnaliseResumoResponse> listar(
             @AuthenticationPrincipal UsuarioAutenticado usuario,
@@ -58,6 +63,7 @@ public class AnaliseController {
         return analiseService.listar(usuario.id(), pagina, tamanho);
     }
 
+    @Operation(summary = "Compara duas versões do mesmo currículo para a mesma vaga")
     @GetMapping("/comparacao")
     public ComparacaoResponse comparar(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                        @RequestParam("anteriorId") UUID anteriorId,
@@ -65,6 +71,7 @@ public class AnaliseController {
         return comparacaoService.comparar(usuario.id(), anteriorId, atualId);
     }
 
+    @Operation(summary = "Detalha uma análise")
     @GetMapping("/{id}")
     public AnaliseResponse buscar(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                   @PathVariable("id") UUID id) {

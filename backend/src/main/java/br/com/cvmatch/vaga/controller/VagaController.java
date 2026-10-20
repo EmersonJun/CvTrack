@@ -4,6 +4,8 @@ import br.com.cvmatch.security.UsuarioAutenticado;
 import br.com.cvmatch.vaga.dto.VagaRequest;
 import br.com.cvmatch.vaga.dto.VagaResponse;
 import br.com.cvmatch.vaga.service.VagaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+@Tag(name = "Vagas", description = "Cadastro das vagas que serão analisadas")
 @RestController
 @RequestMapping("/api/vagas")
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class VagaController {
 
     private final VagaService vagaService;
 
+    @Operation(summary = "Cadastra uma vaga")
     @PostMapping
     public ResponseEntity<VagaResponse> criar(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                               @Valid @RequestBody VagaRequest requisicao) {
@@ -42,17 +46,20 @@ public class VagaController {
         return ResponseEntity.created(location).body(criada);
     }
 
+    @Operation(summary = "Lista as vagas do usuário")
     @GetMapping
     public List<VagaResponse> listar(@AuthenticationPrincipal UsuarioAutenticado usuario) {
         return vagaService.listar(usuario.id());
     }
 
+    @Operation(summary = "Detalha uma vaga")
     @GetMapping("/{id}")
     public VagaResponse buscar(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                @PathVariable("id") UUID id) {
         return vagaService.buscar(id, usuario.id());
     }
 
+    @Operation(summary = "Atualiza uma vaga")
     @PutMapping("/{id}")
     public VagaResponse atualizar(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                   @PathVariable("id") UUID id,
@@ -60,6 +67,7 @@ public class VagaController {
         return vagaService.atualizar(id, usuario.id(), requisicao);
     }
 
+    @Operation(summary = "Exclui uma vaga e as análises dela")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@AuthenticationPrincipal UsuarioAutenticado usuario,

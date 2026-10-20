@@ -4,6 +4,8 @@ import br.com.cvmatch.curriculo.dto.CurriculoDetalheResponse;
 import br.com.cvmatch.curriculo.dto.CurriculoResponse;
 import br.com.cvmatch.curriculo.service.CurriculoService;
 import br.com.cvmatch.security.UsuarioAutenticado;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+@Tag(name = "Currículos", description = "Upload de currículos em PDF e versões")
 @RestController
 @RequestMapping("/api/curriculos")
 @RequiredArgsConstructor
@@ -34,10 +37,7 @@ public class CurriculoController {
 
     private final CurriculoService curriculoService;
 
-    /**
-     * Upload via multipart/form-data (o formato que formulários usam para arquivos).
-     * As anotações @NotBlank/@Size nos parâmetros são validadas pelo próprio Spring MVC (6.1+).
-     */
+    @Operation(summary = "Envia um currículo em PDF e cria uma nova versão do título")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CurriculoResponse> enviar(
             @AuthenticationPrincipal UsuarioAutenticado usuario,
@@ -49,7 +49,6 @@ public class CurriculoController {
 
         CurriculoResponse criado = curriculoService.enviar(usuario.id(), titulo, arquivo);
 
-        // 201 Created + cabeçalho Location apontando para o novo recurso (boa prática REST)
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(criado.id())
@@ -57,24 +56,27 @@ public class CurriculoController {
         return ResponseEntity.created(location).body(criado);
     }
 
+    @Operation(summary = "Lista os currículos do usuário (sem o texto extraído)")
     @GetMapping
     public List<CurriculoResponse> listar(@AuthenticationPrincipal UsuarioAutenticado usuario) {
         return curriculoService.listar(usuario.id());
     }
 
-    /** Todas as versões de um mesmo currículo. Ex.: GET /api/curriculos/versoes?titulo=CV Backend */
+    @Operation(summary = "Lista todas as versões de um título de currículo")
     @GetMapping("/versoes")
     public List<CurriculoResponse> listarVersoes(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                                  @RequestParam("titulo") String titulo) {
         return curriculoService.listarVersoes(usuario.id(), titulo);
     }
 
+    @Operation(summary = "Detalha uma versão, incluindo o texto extraído")
     @GetMapping("/{id}")
     public CurriculoDetalheResponse buscar(@AuthenticationPrincipal UsuarioAutenticado usuario,
                                            @PathVariable("id") UUID id) {
         return curriculoService.buscar(id, usuario.id());
     }
 
+    @Operation(summary = "Exclui uma versão e as análises dela")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@AuthenticationPrincipal UsuarioAutenticado usuario,
