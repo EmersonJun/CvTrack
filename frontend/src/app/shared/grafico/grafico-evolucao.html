@@ -1,0 +1,67 @@
+<div class="area" (mouseleave)="selecionar(null)">
+  <svg
+    [attr.viewBox]="'0 0 ' + d().largura + ' ' + d().altura"
+    role="img"
+    [attr.aria-label]="descricao()"
+  >
+    @for (linha of linhasGrade(); track linha.valor) {
+      <line class="grade" [attr.x1]="d().margemEsquerda" [attr.x2]="d().largura - d().margemDireita" [attr.y1]="linha.y" [attr.y2]="linha.y" />
+      <text class="rotulo-eixo" [attr.x]="d().margemEsquerda - 8" [attr.y]="linha.y + 4" text-anchor="end">{{ linha.valor }}</text>
+    }
+
+    @for (rotulo of rotulosX(); track $index) {
+      <text class="rotulo-eixo" [attr.x]="rotulo.x" [attr.y]="d().altura - 8" text-anchor="middle">
+        {{ rotulo.data | date: 'dd/MM' }}
+      </text>
+    }
+
+    @if (selecionado() !== null) {
+      <line
+        class="mira"
+        [attr.x1]="coordenadas()[selecionado()!].x"
+        [attr.x2]="coordenadas()[selecionado()!].x"
+        [attr.y1]="d().margemTopo"
+        [attr.y2]="d().altura - d().margemBase"
+      />
+    }
+
+    <path class="linha" [attr.d]="caminho()" />
+
+    @for (ponto of coordenadas(); track $index) {
+      <circle class="marcador" [class.ativo]="selecionado() === $index" [attr.cx]="ponto.x" [attr.cy]="ponto.y" r="4" />
+    }
+
+    @if (ultimo(); as fim) {
+      <text class="rotulo-valor" [attr.x]="fim.x" [attr.y]="fim.y - 12" text-anchor="middle">{{ fim.nota }}</text>
+    }
+
+    @for (ponto of coordenadas(); track $index) {
+      <rect
+        class="alvo"
+        [attr.x]="ponto.x - larguraFaixa() / 2"
+        [attr.y]="d().margemTopo"
+        [attr.width]="larguraFaixa()"
+        [attr.height]="d().altura - d().margemTopo - d().margemBase"
+        tabindex="0"
+        (mouseenter)="selecionar($index)"
+        (focus)="selecionar($index)"
+        (blur)="selecionar(null)"
+      />
+    }
+  </svg>
+
+  @if (dica(); as info) {
+    <div
+      class="dica"
+      role="status"
+      [style.left.px]="info.esquerda"
+      [style.top.px]="info.topo"
+      [class.direita]="info.alinharDireita"
+    >
+      <strong>Nota {{ info.ponto.nota }}</strong>
+      <span>{{ info.ponto.curriculoTitulo }} · v{{ info.ponto.versao }}</span>
+      <span>{{ info.ponto.vagaTitulo }}</span>
+      <span class="data">{{ info.ponto.data | date: 'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+  }
+</div>

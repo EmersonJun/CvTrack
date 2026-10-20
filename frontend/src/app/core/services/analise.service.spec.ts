@@ -29,3 +29,28 @@ describe('AnaliseService', () => {
     expect(http.expectOne('/api/analises/a1').request.method).toBe('GET');
   });
 });
+
+describe('AnaliseService - histórico e comparação', () => {
+  let service: AnaliseService;
+  let http: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    service = TestBed.inject(AnaliseService);
+    http = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => http.verify());
+
+  it('deve listar o histórico paginado', () => {
+    service.listar(2, 10).subscribe();
+
+    http.expectOne('/api/analises?pagina=2&tamanho=10').flush({});
+  });
+
+  it('deve comparar duas análises', () => {
+    service.comparar('a1', 'a2').subscribe();
+
+    http.expectOne('/api/analises/comparacao?anteriorId=a1&atualId=a2').flush({});
+  });
+});

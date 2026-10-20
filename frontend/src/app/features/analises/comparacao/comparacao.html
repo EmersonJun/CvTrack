@@ -1,0 +1,97 @@
+<section class="pagina">
+  <div class="pagina-cabecalho">
+    <h1>Comparação de versões</h1>
+    <a mat-stroked-button routerLink="/analises">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar ao histórico
+    </a>
+  </div>
+
+  @if (comparacao(); as c) {
+    <p class="texto-secundario contexto">
+      {{ c.atual.curriculo.titulo }} ×
+      {{ c.atual.vaga.titulo }}{{ c.atual.vaga.empresa ? ' · ' + c.atual.vaga.empresa : '' }}
+    </p>
+
+    <mat-card appearance="outlined" class="placar">
+      <a class="lado" [routerLink]="['/analises', c.anterior.id]">
+        <span class="versao">Versão {{ c.anterior.curriculo.versao }}</span>
+        <app-nota-indicador [nota]="c.anterior.nota" [tamanho]="120" />
+        <small class="texto-secundario">{{ c.anterior.criadoEm | date: 'dd/MM/yyyy' }}</small>
+      </a>
+
+      <div class="variacao" [class.subiu]="c.variacaoNota > 0" [class.caiu]="c.variacaoNota < 0">
+        <mat-icon>{{ c.variacaoNota > 0 ? 'trending_up' : c.variacaoNota < 0 ? 'trending_down' : 'trending_flat' }}</mat-icon>
+        <strong>{{ c.variacaoNota > 0 ? '+' : '' }}{{ c.variacaoNota }}</strong>
+        <span>{{ c.variacaoNota === 1 || c.variacaoNota === -1 ? 'ponto' : 'pontos' }}</span>
+      </div>
+
+      <a class="lado" [routerLink]="['/analises', c.atual.id]">
+        <span class="versao">Versão {{ c.atual.curriculo.versao }}</span>
+        <app-nota-indicador [nota]="c.atual.nota" [tamanho]="120" />
+        <small class="texto-secundario">{{ c.atual.criadoEm | date: 'dd/MM/yyyy' }}</small>
+      </a>
+    </mat-card>
+
+    <div class="grupos">
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="icone-ganho">add_circle</mat-icon>
+          <mat-card-title>Palavras conquistadas</mat-card-title>
+          <mat-card-subtitle>Faltavam antes e agora aparecem</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-set>
+            @for (termo of c.palavrasConquistadas; track termo) {
+              <mat-chip class="chip-presente">{{ termo }}</mat-chip>
+            } @empty {
+              <span class="texto-secundario">Nenhuma</span>
+            }
+          </mat-chip-set>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="icone-pendente">pending</mat-icon>
+          <mat-card-title>Ainda ausentes</mat-card-title>
+          <mat-card-subtitle>Continuam faltando no currículo</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-set>
+            @for (termo of c.palavrasAindaAusentes; track termo) {
+              <mat-chip class="chip-ausente">{{ termo }}</mat-chip>
+            } @empty {
+              <span class="texto-secundario">Nenhuma. Ótimo trabalho!</span>
+            }
+          </mat-chip-set>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="icone-perda">remove_circle</mat-icon>
+          <mat-card-title>Palavras perdidas</mat-card-title>
+          <mat-card-subtitle>Apareciam antes e sumiram</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-set>
+            @for (termo of c.palavrasPerdidas; track termo) {
+              <mat-chip class="chip-ausente">{{ termo }}</mat-chip>
+            } @empty {
+              <span class="texto-secundario">Nenhuma</span>
+            }
+          </mat-chip-set>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  } @else if (erro()) {
+    <div class="estado-vazio">
+      <mat-icon>compare_arrows</mat-icon>
+      <p>{{ erro() }}</p>
+      <a mat-flat-button routerLink="/analises">Escolher outras análises</a>
+    </div>
+  } @else {
+    <div class="carregando-pagina"><mat-spinner diameter="40" /></div>
+  }
+</section>

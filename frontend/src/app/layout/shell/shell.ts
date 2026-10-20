@@ -33,7 +33,7 @@ export class Shell implements OnInit {
     { rota: '/dashboard', rotulo: 'Dashboard', icone: 'insights' },
     { rota: '/curriculos', rotulo: 'Currículos', icone: 'description' },
     { rota: '/vagas', rotulo: 'Vagas', icone: 'work_outline' },
-    { rota: '/analises/nova', rotulo: 'Nova análise', icone: 'auto_awesome' },
+    { rota: '/analises', rotulo: 'Análises', icone: 'history' },
   ];
 
   ngOnInit(): void {

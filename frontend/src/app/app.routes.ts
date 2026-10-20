@@ -36,6 +36,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/vagas/vagas').then((m) => m.Vagas),
       },
       {
+        path: 'analises',
+        title: 'Análises | CV Match',
+        loadComponent: () =>
+          import('./features/analises/historico/historico').then((m) => m.Historico),
+      },
+      {
+        path: 'analises/comparar',
+        title: 'Comparação | CV Match',
+        loadComponent: () =>
+          import('./features/analises/comparacao/comparacao').then((m) => m.ComparacaoAnalises),
+      },
+      {
         path: 'analises/nova',
         title: 'Nova análise | CV Match',
         loadComponent: () =>

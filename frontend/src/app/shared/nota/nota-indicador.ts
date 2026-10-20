@@ -13,7 +13,7 @@ import { descricaoDaNota, faixaDaNota } from './nota';
       role="img"
       [attr.aria-label]="'Nota ' + nota() + ' de 100'"
     >
-      <span class="valor">{{ nota() }}</span>
+      <span class="valor" [style.font-size.px]="tamanho() * 0.28">{{ nota() }}</span>
     </div>
     @if (comDescricao()) {
       <span class="descricao">{{ descricao() }}</span>

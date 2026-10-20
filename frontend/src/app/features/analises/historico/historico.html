@@ -1,0 +1,101 @@
+<section class="pagina">
+  <div class="pagina-cabecalho">
+    <h1>Análises</h1>
+    <div class="acoes-cabecalho">
+      <button mat-stroked-button [disabled]="!podeComparar()" (click)="comparar()">
+        <mat-icon>compare_arrows</mat-icon>
+        Comparar selecionadas ({{ selecionadas().length }}/2)
+      </button>
+      <a mat-flat-button routerLink="/analises/nova">
+        <mat-icon>auto_awesome</mat-icon>
+        Nova análise
+      </a>
+    </div>
+  </div>
+
+  <p class="texto-secundario dica-comparacao">
+    Selecione duas versões do mesmo currículo, analisadas para a mesma vaga, para ver o que mudou.
+  </p>
+
+  @if (pagina(); as resultado) {
+    @if (resultado.totalElementos === 0) {
+      <mat-card appearance="outlined">
+        <div class="estado-vazio">
+          <mat-icon>history</mat-icon>
+          <p>Nenhuma análise feita ainda.</p>
+          <a mat-flat-button routerLink="/analises/nova">Fazer a primeira análise</a>
+        </div>
+      </mat-card>
+    } @else {
+      <mat-card appearance="outlined" class="tabela-cartao">
+        <div class="rolagem">
+          <table mat-table [dataSource]="resultado.conteudo" [class.carregando]="carregando()">
+            <ng-container matColumnDef="selecao">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let analise">
+                <mat-checkbox
+                  [checked]="selecionada(analise)"
+                  [disabled]="bloqueada(analise)"
+                  (change)="alternar(analise)"
+                  [aria-label]="'Selecionar análise de ' + analise.curriculo.titulo"
+                />
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="nota">
+              <th mat-header-cell *matHeaderCellDef>Nota</th>
+              <td mat-cell *matCellDef="let analise">
+                <app-nota-indicador [nota]="analise.nota" [tamanho]="48" [comDescricao]="false" />
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="curriculo">
+              <th mat-header-cell *matHeaderCellDef>Currículo</th>
+              <td mat-cell *matCellDef="let analise">
+                {{ analise.curriculo.titulo }} <span class="versao">v{{ analise.curriculo.versao }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="vaga">
+              <th mat-header-cell *matHeaderCellDef>Vaga</th>
+              <td mat-cell *matCellDef="let analise">
+                {{ analise.vaga.titulo }}
+                @if (analise.vaga.empresa) {
+                  <small class="texto-secundario">· {{ analise.vaga.empresa }}</small>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="data">
+              <th mat-header-cell *matHeaderCellDef>Data</th>
+              <td mat-cell *matCellDef="let analise">{{ analise.criadoEm | date: 'dd/MM/yyyy HH:mm' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let analise">
+                <a mat-icon-button [routerLink]="['/analises', analise.id]" matTooltip="Ver resultado" aria-label="Ver resultado">
+                  <mat-icon>chevron_right</mat-icon>
+                </a>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+            <tr mat-row *matRowDef="let linha; columns: colunas" [class.marcada]="selecionada(linha)"></tr>
+          </table>
+        </div>
+
+        <mat-paginator
+          [length]="resultado.totalElementos"
+          [pageIndex]="resultado.pagina"
+          [pageSize]="resultado.tamanho"
+          [pageSizeOptions]="[10, 20, 50]"
+          (page)="mudarPagina($event)"
+          aria-label="Paginação do histórico"
+        />
+      </mat-card>
+    }
+  } @else if (carregando()) {
+    <div class="carregando-pagina"><mat-spinner diameter="40" /></div>
+  }
+</section>

@@ -1,0 +1,86 @@
+<section class="pagina">
+  <div class="pagina-cabecalho">
+    <h1>Olá{{ auth.usuario() ? ', ' + auth.usuario()!.nome : '' }}!</h1>
+    <a mat-flat-button routerLink="/analises/nova">
+      <mat-icon>auto_awesome</mat-icon>
+      Nova análise
+    </a>
+  </div>
+
+  @if (carregando()) {
+    <div class="carregando-pagina"><mat-spinner diameter="40" /></div>
+  } @else if (painel(); as p) {
+    <div class="indicadores">
+      <mat-card appearance="outlined" class="indicador">
+        <span class="rotulo">Análises</span>
+        <strong class="valor">{{ p.totalAnalises }}</strong>
+        <span class="detalhe">{{ p.totalCurriculos }} currículos · {{ p.totalVagas }} vagas</span>
+      </mat-card>
+      <mat-card appearance="outlined" class="indicador">
+        <span class="rotulo">Nota média</span>
+        <strong class="valor">{{ p.notaMedia === null ? '–' : (p.notaMedia | number: '1.0-1') }}</strong>
+        <span class="detalhe">de 0 a 100</span>
+      </mat-card>
+      <mat-card appearance="outlined" class="indicador">
+        <span class="rotulo">Melhor nota</span>
+        <strong class="valor">{{ p.melhorNota ?? '–' }}</strong>
+        <span class="detalhe">entre todas as análises</span>
+      </mat-card>
+      <mat-card appearance="outlined" class="indicador">
+        <span class="rotulo">Última nota</span>
+        <strong class="valor">{{ p.ultimaNota ?? '–' }}</strong>
+        <span class="detalhe">análise mais recente</span>
+      </mat-card>
+    </div>
+
+    @if (p.totalAnalises === 0) {
+      <mat-card appearance="outlined">
+        <div class="estado-vazio">
+          <mat-icon>insights</mat-icon>
+          <p>Faça a primeira análise para acompanhar a evolução da sua nota aqui.</p>
+          <div class="atalhos">
+            <a mat-button routerLink="/curriculos">Enviar currículo</a>
+            <a mat-button routerLink="/vagas">Cadastrar vaga</a>
+          </div>
+        </div>
+      </mat-card>
+    } @else {
+      <div class="paineis">
+        <mat-card appearance="outlined" class="painel-grafico">
+          <mat-card-header>
+            <mat-card-title>Evolução da nota</mat-card-title>
+            <mat-card-subtitle>Últimas {{ p.evolucao.length }} análises</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <app-grafico-evolucao [pontos]="p.evolucao" />
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <a mat-button routerLink="/analises">Ver histórico completo</a>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Palavras-chave que mais faltam</mat-card-title>
+            <mat-card-subtitle>Considere incluí-las nos currículos</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <ul class="ranking">
+              @for (item of p.palavrasMaisAusentes; track item.termo) {
+                <li>
+                  <span class="termo">{{ item.termo }}</span>
+                  <span class="trilho">
+                    <span class="barra" [style.width.%]="(item.ocorrencias / maiorOcorrencia()) * 100"></span>
+                  </span>
+                  <span class="contagem">{{ item.ocorrencias }}</span>
+                </li>
+              } @empty {
+                <li class="texto-secundario">Nenhuma palavra-chave ausente até agora.</li>
+              }
+            </ul>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+  }
+</section>

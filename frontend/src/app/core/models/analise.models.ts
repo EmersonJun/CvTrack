@@ -30,3 +30,28 @@ export interface NovaAnaliseRequest {
   curriculoId: string;
   vagaId: string;
 }
+
+export interface AnaliseResumo {
+  id: string;
+  nota: number;
+  curriculo: CurriculoResumo;
+  vaga: VagaResumo;
+  criadoEm: string;
+}
+
+export interface Pagina<T> {
+  conteudo: T[];
+  pagina: number;
+  tamanho: number;
+  totalElementos: number;
+  totalPaginas: number;
+}
+
+export interface Comparacao {
+  anterior: AnaliseResumo;
+  atual: AnaliseResumo;
+  variacaoNota: number;
+  palavrasConquistadas: string[];
+  palavrasPerdidas: string[];
+  palavrasAindaAusentes: string[];
+}

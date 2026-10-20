@@ -1,0 +1,88 @@
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+
+  .rotulo {
+    font: var(--mat-sys-label-large);
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .valor {
+    font: var(--mat-sys-display-small);
+    font-weight: 600;
+  }
+
+  .detalhe {
+    font: var(--mat-sys-body-small);
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.paineis {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.ranking {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+
+  li {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr) 24px;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+  }
+}
+
+.termo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trilho {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--mat-sys-surface-container-high);
+}
+
+.barra {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--mat-sys-primary);
+}
+
+.contagem {
+  text-align: right;
+  font: var(--mat-sys-label-large);
+}
+
+.atalhos {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .paineis {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

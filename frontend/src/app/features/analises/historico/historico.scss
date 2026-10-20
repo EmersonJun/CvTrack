@@ -1,0 +1,45 @@
+.acoes-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dica-comparacao {
+  margin: -12px 0 16px;
+}
+
+.tabela-cartao {
+  overflow: hidden;
+}
+
+.rolagem {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 640px;
+  background: transparent;
+
+  &.carregando {
+    opacity: 0.5;
+  }
+}
+
+td {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.versao {
+  margin-left: 4px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font: var(--mat-sys-label-small);
+}
+
+.marcada {
+  background: var(--mat-sys-surface-container-highest);
+}
