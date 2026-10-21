@@ -40,17 +40,23 @@ jobs:
           path: backend/target/surefire-reports/
           retention-days: 7
 
-  backend-docker:
-    name: Backend - imagem Docker
+  docker:
+    name: Imagens Docker
     runs-on: ubuntu-latest
-    needs: backend
+    needs: [backend, frontend]
 
     steps:
       - name: Baixar o código
         uses: actions/checkout@v4
 
-      - name: Construir a imagem
+      - name: Validar o docker compose
+        run: docker compose config --quiet
+
+      - name: Construir a imagem do backend
         run: docker build -t cvmatch-backend:${{ github.sha }} backend
+
+      - name: Construir a imagem do frontend
+        run: docker build -t cvmatch-frontend:${{ github.sha }} frontend
 
   frontend:
     name: Frontend - build e testes
