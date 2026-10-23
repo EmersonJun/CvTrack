@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="docs/icon.png" alt="CV Match" width="120" />
-</p>
-
-<p align="center">
   <img src="docs/banner.png" alt="CV Match — Análise de aderência de currículos a vagas com IA" width="100%" />
 </p>
 
