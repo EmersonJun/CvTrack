@@ -1,5 +1,3 @@
--- Palavras-chave ficam em tabela própria (e não em JSON) porque serão CONSULTADAS:
--- ex.: "termos que mais faltam nos meus currículos" no dashboard.
 CREATE TABLE palavra_chave (
     id          UUID         PRIMARY KEY,
     analise_id  UUID         NOT NULL,

@@ -16,18 +16,10 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Gera e valida tokens JWT assinados com HMAC-SHA (chave simétrica).
- *
- * O token carrega id, e-mail e papel do usuário. Assim, cada requisição é
- * autenticada SEM consultar o banco (API stateless).
- * Contrapartida: mudanças de papel só valem quando o token expira.
- */
 @Slf4j
 @Service
 public class JwtService {
 
-    /** HS256 exige chave de no mínimo 256 bits = 32 bytes. */
     private static final int TAMANHO_MINIMO_SEGREDO = 32;
 
     private final SecretKey chave;
@@ -37,7 +29,6 @@ public class JwtService {
         byte[] segredo = propriedades.secret() == null
                 ? new byte[0]
                 : propriedades.secret().getBytes(StandardCharsets.UTF_8);
-        // Fail fast: melhor a aplicação não subir do que rodar com chave fraca
         if (segredo.length < TAMANHO_MINIMO_SEGREDO) {
             throw new IllegalStateException(
                     "JWT_SECRET deve ter pelo menos " + TAMANHO_MINIMO_SEGREDO + " caracteres");
@@ -58,11 +49,6 @@ public class JwtService {
                 .compact();
     }
 
-    /**
-     * Valida assinatura e expiração. Devolve vazio (em vez de lançar exceção)
-     * para o filtro simplesmente seguir sem autenticar; quem barra a
-     * requisição depois é o Spring Security, com 401.
-     */
     public Optional<UsuarioAutenticado> validar(String token) {
         try {
             Claims claims = Jwts.parser()

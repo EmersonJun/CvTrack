@@ -23,10 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Resultado da análise de UMA versão de currículo contra UMA vaga.
- * É a raiz do agregado: as palavras-chave só existem por meio dela.
- */
 @Entity
 @Table(name = "analise")
 @Getter
@@ -49,7 +45,6 @@ public class Analise extends EntidadeBase {
     @Column(columnDefinition = "text")
     private String resumo;
 
-    // Hibernate 6 converte List<String> <-> JSON automaticamente (via Jackson)
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "pontos_fortes", nullable = false, columnDefinition = "jsonb")
     private List<String> pontosFortes = new ArrayList<>();
@@ -67,7 +62,6 @@ public class Analise extends EntidadeBase {
     @Column(name = "tempo_processamento_ms")
     private Long tempoProcessamentoMs;
 
-    // cascade ALL + orphanRemoval: a palavra-chave nasce e morre com a análise
     @OneToMany(mappedBy = "analise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PalavraChave> palavrasChave = new ArrayList<>();
 
@@ -88,13 +82,10 @@ public class Analise extends EntidadeBase {
         this.tempoProcessamentoMs = tempoProcessamentoMs;
     }
 
-    /** Único jeito de criar palavra-chave: mantém os dois lados da relação sincronizados. */
     public void adicionarPalavraChave(String termo, TipoPalavraChave tipo) {
         palavrasChave.add(new PalavraChave(this, termo, tipo));
     }
 
-    // Getters explícitos (o Lombok não gera quando já existe) devolvem listas
-    // somente-leitura, para ninguém alterar a coleção por fora.
     public List<PalavraChave> getPalavrasChave() {
         return Collections.unmodifiableList(palavrasChave);
     }

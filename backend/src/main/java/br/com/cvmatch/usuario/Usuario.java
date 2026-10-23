@@ -15,7 +15,7 @@ import java.util.Locale;
 @Entity
 @Table(name = "usuario")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // exigido pelo JPA, mas fora do uso normal
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Usuario extends EntidadeBase {
 
     @Column(nullable = false, length = 100)
@@ -27,7 +27,7 @@ public class Usuario extends EntidadeBase {
     @Column(name = "senha_hash", nullable = false, length = 100)
     private String senhaHash;
 
-    @Enumerated(EnumType.STRING) // grava "USER", e não 0: reordenar o enum não corrompe dados
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role;
 

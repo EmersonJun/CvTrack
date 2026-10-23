@@ -13,15 +13,6 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Campos comuns a todas as entidades: id (UUID) e data de criação.
- *
- * equals/hashCode seguem o padrão recomendado para JPA:
- * - duas entidades são iguais se têm o MESMO id não nulo;
- * - hashCode é constante por classe, para não mudar quando o id
- *   é gerado no persist (o que quebraria HashSet/HashMap);
- * - proxies do Hibernate (lazy loading) são comparados pela classe real.
- */
 @MappedSuperclass
 @Getter
 public abstract class EntidadeBase {

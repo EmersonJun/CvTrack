@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor // injeção por construtor: dependências final e fáceis de mockar
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
@@ -31,7 +31,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final UsuarioMapper usuarioMapper;
 
-    /** Cria a conta e já devolve um token (o usuário entra logado). */
     @Transactional
     public TokenResponse registrar(RegistroRequest requisicao) {
         String email = Usuario.normalizarEmail(requisicao.email());
@@ -47,11 +46,6 @@ public class AuthService {
         return gerarToken(UsuarioAutenticado.de(usuario));
     }
 
-    /**
-     * Delega a verificação ao Spring Security: o AuthenticationManager busca o
-     * usuário (UsuarioDetailsService) e compara a senha com o BCrypt.
-     * Se falhar, lança BadCredentialsException -> 401 no GlobalExceptionHandler.
-     */
     public TokenResponse login(LoginRequest requisicao) {
         Authentication autenticacao = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

@@ -12,18 +12,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * Uma versão de currículo. Versões com o mesmo título pertencem ao
- * "mesmo currículo" e permitem comparar a evolução da nota.
- * O PDF não é guardado, apenas o texto extraído (menos espaço e LGPD).
- */
 @Entity
 @Table(name = "curriculo")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Curriculo extends EntidadeBase {
 
-    // LAZY: o usuário só é buscado no banco se alguém acessá-lo
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
@@ -40,7 +34,6 @@ public class Curriculo extends EntidadeBase {
     @Column(name = "texto_extraido", nullable = false, columnDefinition = "text")
     private String textoExtraido;
 
-    /** SHA-256 do texto, usado para bloquear o envio do mesmo arquivo duas vezes. */
     @Column(name = "hash_conteudo", nullable = false, length = 64)
     private String hashConteudo;
 

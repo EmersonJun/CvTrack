@@ -1,5 +1,6 @@
 package br.com.cvmatch.analise;
 
+import br.com.cvmatch.analise.ia.AnalisadorIa;
 import br.com.cvmatch.analise.ia.AnaliseIaResponse;
 import br.com.cvmatch.analise.ia.ResultadoAnaliseIa;
 import br.com.cvmatch.support.IntegrationTest;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
@@ -24,6 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class HistoricoEDashboardIntegrationTest extends IntegrationTest {
+
+    @MockitoBean
+    private AnalisadorIa analisadorIa;
 
     private String token;
     private String vagaId;

@@ -13,16 +13,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * Roda uma vez por requisição: lê "Authorization: Bearer <token>", valida o token
- * e, se ele for válido, coloca o usuário no SecurityContext.
- *
- * NÃO é um @Component de propósito: o Spring Boot registraria qualquer Filter
- * que fosse bean também na cadeia de servlets, e ele rodaria duas vezes.
- * Ele é criado manualmente dentro do SecurityConfig.
- */
 @RequiredArgsConstructor
-public class ;JwtAuthFilter extends OncePerRequestFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
 
     private static final String PREFIXO = "Bearer ";
 
@@ -45,8 +37,6 @@ public class ;JwtAuthFilter extends OncePerRequestFilter {
             });
         }
 
-        // Sem token (ou com token inválido) a requisição segue anônima.
-        // Se a rota exigir login, o Spring Security responde 401 mais adiante.
         chain.doFilter(request, response);
     }
 }

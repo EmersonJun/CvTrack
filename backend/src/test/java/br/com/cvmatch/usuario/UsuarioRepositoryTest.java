@@ -16,7 +16,7 @@ class UsuarioRepositoryTest extends RepositoryTest {
     @Test
     void deveSalvarComEmailNormalizadoERolePadrao() {
         repository.saveAndFlush(new Usuario("Ana", "  Ana@Email.COM ", "hash"));
-        em.clear(); // força a próxima leitura a vir do banco, não do cache
+        em.clear();
 
         var encontrado = repository.findByEmail("ana@email.com");
 

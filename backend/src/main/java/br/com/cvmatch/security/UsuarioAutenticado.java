@@ -10,14 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * O usuário logado, como o Spring Security o enxerga.
- * Fica separado da entidade Usuario para não misturar regras de segurança
- * com persistência. Nos controllers: @AuthenticationPrincipal UsuarioAutenticado.
- *
- * @param senhaHash só é preenchida no login (para o BCrypt comparar);
- *                  quando o usuário vem do token, é null.
- */
 public record UsuarioAutenticado(UUID id, String email, String senhaHash, Role role) implements UserDetails {
 
     public static UsuarioAutenticado de(Usuario usuario) {
@@ -26,7 +18,6 @@ public record UsuarioAutenticado(UUID id, String email, String senhaHash, Role r
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convenção do Spring: papéis começam com "ROLE_" (permite usar hasRole("ADMIN"))
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
@@ -40,7 +31,6 @@ public record UsuarioAutenticado(UUID id, String email, String senhaHash, Role r
         return email;
     }
 
-    /** Sobrescrito para o hash da senha nunca aparecer em logs. */
     @Override
     public String toString() {
         return "UsuarioAutenticado[id=" + id + ", email=" + email + ", role=" + role + "]";

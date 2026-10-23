@@ -32,13 +32,6 @@ public class CurriculoService {
     private final PdfTextExtractor pdfTextExtractor;
     private final CurriculoMapper mapper;
 
-    /**
-     * Fluxo do upload:
-     * 1. extrai o texto do PDF (valida que é PDF de verdade e tem texto)
-     * 2. calcula o hash e bloqueia o envio do mesmo currículo duas vezes
-     * 3. descobre a próxima versão do título (última + 1)
-     * 4. salva só o texto; o PDF é descartado
-     */
     @Transactional
     public CurriculoResponse enviar(UUID usuarioId, String titulo, MultipartFile arquivo) {
         if (arquivo == null || arquivo.isEmpty()) {
@@ -55,13 +48,8 @@ public class CurriculoService {
         String tituloNormalizado = titulo.trim();
         int proximaVersao = curriculoRepository.buscarUltimaVersao(usuarioId, tituloNormalizado) + 1;
 
-        // getReferenceById devolve um "proxy" com o id, SEM fazer SELECT no banco.
-        // Basta para preencher a chave estrangeira usuario_id.
         Usuario usuario = usuarioRepository.getReferenceById(usuarioId);
 
-        // saveAndFlush: força o INSERT agora. Assim o criadoEm já vem preenchido na
-        // resposta e, se duas requisições simultâneas gerarem a mesma versão, a
-        // constraint UNIQUE estoura aqui dentro (vira 409 no GlobalExceptionHandler).
         Curriculo salvo = curriculoRepository.saveAndFlush(new Curriculo(
                 usuario, tituloNormalizado, proximaVersao, nomeArquivo(arquivo), texto, hash));
 
@@ -84,7 +72,6 @@ public class CurriculoService {
         return mapper.paraDetalhe(buscarDoUsuario(id, usuarioId));
     }
 
-    /** As análises dessa versão são removidas pelo ON DELETE CASCADE do banco. */
     @Transactional
     public void excluir(UUID id, UUID usuarioId) {
         curriculoRepository.delete(buscarDoUsuario(id, usuarioId));
@@ -103,7 +90,6 @@ public class CurriculoService {
         }
     }
 
-    /** Remove caminhos que alguns navegadores enviam (ex.: C:\fakepath\cv.pdf) e limita o tamanho. */
     private String nomeArquivo(MultipartFile arquivo) {
         String nome = StringUtils.getFilename(StringUtils.cleanPath(
                 arquivo.getOriginalFilename() == null ? "" : arquivo.getOriginalFilename()));

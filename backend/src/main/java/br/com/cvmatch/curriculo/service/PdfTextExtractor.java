@@ -11,26 +11,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-/**
- * Extrai o texto de um PDF com o Apache PDFBox.
- *
- * Fica isolado numa classe própria (e não dentro do service) para:
- * - ser testado sozinho, com PDFs gerados no próprio teste;
- * - ser mockado no teste do service;
- * - poder ser trocado no futuro (ex.: OCR para PDFs escaneados) sem mexer no resto.
- */
 @Component
 public class PdfTextExtractor {
 
-    /** Todo PDF começa com esses bytes ("magic number"). */
     private static final byte[] ASSINATURA_PDF = "%PDF-".getBytes(StandardCharsets.US_ASCII);
 
     static final int MINIMO_CARACTERES = 50;
     static final int MAXIMO_PAGINAS = 10;
 
     public String extrair(byte[] conteudo) {
-        // Não confiamos na extensão nem no Content-Type: ambos são definidos pelo
-        // cliente e podem ser falsificados. Os primeiros bytes do arquivo não mentem.
         if (!temAssinaturaPdf(conteudo)) {
             throw new RegraNegocioException("O arquivo enviado não é um PDF válido");
         }
@@ -42,7 +31,7 @@ public class PdfTextExtractor {
             }
 
             PDFTextStripper stripper = new PDFTextStripper();
-            stripper.setSortByPosition(true); // respeita a ordem visual (útil em layouts de colunas)
+            stripper.setSortByPosition(true);
             String texto = normalizar(stripper.getText(documento));
 
             if (texto.length() < MINIMO_CARACTERES) {
@@ -64,18 +53,14 @@ public class PdfTextExtractor {
                 && Arrays.equals(conteudo, 0, ASSINATURA_PDF.length, ASSINATURA_PDF, 0, ASSINATURA_PDF.length);
     }
 
-    /**
-     * Padroniza o texto para que o mesmo currículo gere sempre o mesmo hash
-     * e para economizar tokens quando o texto for enviado à IA.
-     */
     static String normalizar(String texto) {
         return texto
-                .replace("\u0000", "")             // o PostgreSQL não aceita o caractere nulo em TEXT
-                .replace("\r\n", "\n")             // quebra de linha do Windows -> padrão Unix
+                .replace("\u0000", "")
+                .replace("\r\n", "\n")
                 .replace('\r', '\n')
-                .replaceAll("[ \\t\\x0B\\f\\u00A0]+", " ") // vários espaços/tabs -> um espaço
-                .replaceAll(" *\\n *", "\n")       // remove espaços nas bordas de cada linha
-                .replaceAll("\\n{3,}", "\n\n")     // no máximo uma linha em branco seguida
+                .replaceAll("[ \\t\\x0B\\f\\u00A0]+", " ")
+                .replaceAll(" *\\n *", "\n")
+                .replaceAll("\\n{3,}", "\n\n")
                 .strip();
     }
 }

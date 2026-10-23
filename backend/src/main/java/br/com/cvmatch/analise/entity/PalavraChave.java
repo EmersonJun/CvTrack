@@ -13,10 +13,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * Faz parte do agregado Analise: só é criada pela própria Analise
- * (construtor package-private) e é salva/removida junto com ela (cascade).
- */
 @Entity
 @Table(name = "palavra_chave")
 @Getter

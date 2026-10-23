@@ -20,14 +20,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.time.Instant;
 import java.util.List;
 
-/**
- * Converte exceções em respostas HTTP padronizadas no formato
- * Problem Details (RFC 9457), suportado nativamente pelo Spring 6.
- *
- * Estender ResponseEntityExceptionHandler garante que os erros do próprio
- * Spring MVC (405, 415, JSON malformado...) também saiam nesse formato,
- * em vez de caírem no handler genérico como 500.
- */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -47,10 +39,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problema(HttpStatus.UNPROCESSABLE_ENTITY, "Regra de negócio violada", ex.getMessage());
     }
 
-    /**
-     * Rede de segurança para condições de corrida: duas requisições simultâneas
-     * passam pelo existsByEmail, mas a constraint UNIQUE do banco barra a segunda.
-     */
+    @ExceptionHandler(FalhaIaException.class)
+    public ProblemDetail tratarFalhaIa(FalhaIaException ex) {
+        return problema(HttpStatus.BAD_GATEWAY, "Falha no serviço de IA", ex.getMessage());
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail tratarIntegridade(DataIntegrityViolationException ex) {
         log.warn("Violação de integridade: {}", ex.getMostSpecificCause().getMessage());
@@ -59,7 +52,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail tratarCredenciaisInvalidas(BadCredentialsException ex) {
-        // Mensagem genérica de propósito: não revela se o e-mail existe
         return problema(HttpStatus.UNAUTHORIZED, "Não autenticado", "E-mail ou senha inválidos");
     }
 
@@ -68,7 +60,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problema(HttpStatus.UNAUTHORIZED, "Não autenticado", "Falha na autenticação");
     }
 
-    /** Qualquer erro não previsto: loga com stack trace, mas não vaza detalhes ao cliente. */
     @ExceptionHandler(Exception.class)
     public ProblemDetail tratarErroInesperado(Exception ex) {
         log.error("Erro inesperado", ex);
@@ -76,7 +67,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Ocorreu um erro inesperado. Tente novamente mais tarde.");
     }
 
-    /** Erros do @Valid em um @RequestBody: devolve a lista de campos inválidos. */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
@@ -89,11 +79,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, dadosInvalidos(ex.getBody(), campos), headers, status, request);
     }
 
-    /**
-     * Erros de validação em parâmetros soltos (@RequestParam, @PathVariable),
-     * ex.: o "titulo" do upload. Mesmo formato do erro acima, para o frontend
-     * tratar tudo de um jeito só.
-     */
     @Override
     protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex,
                                                                             HttpHeaders headers,
@@ -109,7 +94,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, dadosInvalidos(ex.getBody(), campos), headers, status, request);
     }
 
-    /** Arquivo maior que spring.servlet.multipart.max-file-size -> 413. */
     @Override
     protected ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex,
                                                                           HttpHeaders headers,

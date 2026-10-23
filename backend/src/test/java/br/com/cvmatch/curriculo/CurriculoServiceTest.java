@@ -67,7 +67,7 @@ class CurriculoServiceTest {
 
         assertThat(salvo.getVersao()).isEqualTo(3);
         assertThat(salvo.getTitulo()).isEqualTo("CV Backend");
-        assertThat(salvo.getNomeArquivo()).isEqualTo("meu-cv.pdf"); // caminho removido
+        assertThat(salvo.getNomeArquivo()).isEqualTo("meu-cv.pdf");
         assertThat(salvo.getHashConteudo()).hasSize(64);
         assertThat(resposta.versao()).isEqualTo(3);
         assertThat(resposta.totalCaracteres()).isEqualTo(TEXTO.length());

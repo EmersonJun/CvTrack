@@ -13,7 +13,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** Teste unitário puro (sem Spring, sem banco): regras da própria entidade. */
 class AnaliseTest {
 
     private final Usuario ana = new Usuario("Ana", "ana@email.com", "hash");
@@ -37,7 +36,7 @@ class AnaliseTest {
         var analise = new Analise(curriculo, vaga, 70, null, pontosFortes, List.of(), "ollama", "llama3.1", null);
 
         analise.adicionarPalavraChave("Spring", TipoPalavraChave.PRESENTE);
-        pontosFortes.add("alterado por fora"); // não deve afetar a entidade (cópia defensiva)
+        pontosFortes.add("alterado por fora");
 
         assertThat(analise.getPalavrasChave().getFirst().getAnalise()).isSameAs(analise);
         assertThat(analise.getPontosFortes()).containsExactly("Java");

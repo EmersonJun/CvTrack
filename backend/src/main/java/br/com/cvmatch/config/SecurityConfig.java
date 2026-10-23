@@ -46,11 +46,8 @@ public class SecurityConfig {
                                                    JwtService jwtService,
                                                    SecurityErrorHandler errorHandler) throws Exception {
         return http
-                // CSRF protege sessões baseadas em COOKIE. Aqui o token vai no
-                // cabeçalho Authorization, que o navegador não envia sozinho.
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                // Stateless: o servidor não guarda sessão; cada requisição traz o token
                 .sessionManagement(sessao -> sessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(rotas -> rotas
                         .requestMatchers(ROTAS_PUBLICAS).permitAll()
@@ -58,27 +55,20 @@ public class SecurityConfig {
                 .exceptionHandling(erros -> erros
                         .authenticationEntryPoint(errorHandler)
                         .accessDeniedHandler(errorHandler))
-                // Nosso filtro roda ANTES do filtro padrão de login por formulário
                 .addFilterBefore(new JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    /** BCrypt: hash lento e com "salt" aleatório, próprio para senhas. */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Expõe o AuthenticationManager que o Spring monta sozinho
-     * (UsuarioDetailsService + PasswordEncoder) para o AuthService usar no login.
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuracao) throws Exception {
         return configuracao.getAuthenticationManager();
     }
 
-    /** Libera o frontend Angular (outra origem/porta) a chamar a API. */
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
             @Value("${cvmatch.cors.allowed-origins}") String[] origensPermitidas) {

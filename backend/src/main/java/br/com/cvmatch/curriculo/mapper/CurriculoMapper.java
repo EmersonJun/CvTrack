@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CurriculoMapper {
 
-    // Campos com o mesmo nome são copiados sozinhos; só o calculado precisa de regra
     @Mapping(target = "totalCaracteres", expression = "java(curriculo.getTextoExtraido().length())")
     CurriculoResponse paraResponse(Curriculo curriculo);
 

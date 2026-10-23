@@ -36,7 +36,6 @@ public class Vaga extends EntidadeBase {
         atualizar(titulo, empresa, descricao);
     }
 
-    /** Em vez de setters soltos, um método que expressa a intenção de negócio. */
     public void atualizar(String titulo, String empresa, String descricao) {
         this.titulo = titulo;
         this.empresa = empresa;

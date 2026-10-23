@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/** Testa o fluxo completo: HTTP -> filtro JWT -> controller -> service -> PostgreSQL. */
 class AuthControllerIntegrationTest extends IntegrationTest {
 
     private static final String SENHA = "senhaForte123";
@@ -23,7 +22,6 @@ class AuthControllerIntegrationTest extends IntegrationTest {
                 """.formatted(nome, email, senha);
     }
 
-    /** Registra um usuário e devolve o token recebido. */
     private String registrar(String email) throws Exception {
         String resposta = mvc.perform(post("/api/auth/registro")
                         .contentType(MediaType.APPLICATION_JSON)

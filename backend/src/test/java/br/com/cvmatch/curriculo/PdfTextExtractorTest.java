@@ -23,8 +23,8 @@ class PdfTextExtractorTest {
         assertThat(texto)
                 .contains("Emerson Junior")
                 .contains("Spring Boot")
-                .doesNotContain("\r")   // quebras de linha normalizadas
-                .doesNotContain("  "); // sem espaços duplicados
+                .doesNotContain("\r")
+                .doesNotContain("  ");
     }
 
     @Test
@@ -47,7 +47,6 @@ class PdfTextExtractorTest {
     void deveRejeitarPdfCorrompido() {
         byte[] corrompido = "%PDF-1.7 conteudo quebrado".getBytes(StandardCharsets.US_ASCII);
 
-        // Tem a assinatura de PDF, mas o conteúdo é lixo: deve falhar de forma controlada
         assertThatThrownBy(() -> extrator.extrair(corrompido))
                 .isInstanceOf(RegraNegocioException.class);
     }

@@ -8,7 +8,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** Teste unitário puro: o JwtService não depende do Spring para funcionar. */
 class JwtServiceTest {
 
     private static final String SEGREDO = "segredo-de-teste-com-mais-de-32-caracteres";

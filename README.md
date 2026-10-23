@@ -1,4 +1,10 @@
-# CV Match
+<p align="center">
+  <img src="docs/icon.png" alt="CV Match" width="120" />
+</p>
+
+<p align="center">
+  <img src="docs/banner.png" alt="CV Match — Análise de aderência de currículos a vagas com IA" width="100%" />
+</p>
 
 > Descubra o quanto seu currículo combina com uma vaga, quais palavras-chave estão faltando e como melhorar, com análise feita por IA.
 

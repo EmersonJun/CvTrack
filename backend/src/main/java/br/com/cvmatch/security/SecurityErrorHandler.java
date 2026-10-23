@@ -18,14 +18,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
-/**
- * Erros que acontecem nos FILTROS do Spring Security (antes de chegar ao controller)
- * não passam pelo @RestControllerAdvice. Esta classe responde no mesmo formato
- * Problem Details, para o frontend receber sempre o mesmo padrão de erro.
- *
- * - AuthenticationEntryPoint: sem token ou token inválido -> 401
- * - AccessDeniedHandler: logado, mas sem permissão -> 403
- */
 @Component
 @RequiredArgsConstructor
 public class SecurityErrorHandler implements AuthenticationEntryPoint, AccessDeniedHandler {

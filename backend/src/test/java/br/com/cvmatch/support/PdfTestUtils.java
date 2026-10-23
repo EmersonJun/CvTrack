@@ -10,10 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-/**
- * Gera PDFs de verdade durante os testes, com o próprio PDFBox.
- * Assim não precisamos versionar arquivos .pdf binários no repositório.
- */
 public final class PdfTestUtils {
 
     private PdfTestUtils() {
@@ -40,7 +36,6 @@ public final class PdfTestUtils {
         }
     }
 
-    /** Um currículo plausível; o sufixo deixa o texto (e o hash) diferente a cada versão. */
     public static byte[] curriculo(String sufixo) {
         return pdfComTexto(
                 "Emerson Junior - Desenvolvedor Java",

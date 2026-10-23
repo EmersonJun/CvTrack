@@ -32,10 +32,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-/**
- * Teste unitário com Mockito: as dependências são "dublês" (mocks).
- * Testamos só a lógica do AuthService, sem banco e sem Spring, em milissegundos.
- */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
@@ -48,7 +44,6 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
-        // O mapper é real (código gerado pelo MapStruct), os demais são mocks
         UsuarioMapper mapper = Mappers.getMapper(UsuarioMapper.class);
         authService = new AuthService(usuarioRepository, passwordEncoder, authenticationManager, jwtService, mapper);
     }
@@ -63,14 +58,13 @@ class AuthServiceTest {
 
         var resposta = authService.registrar(new RegistroRequest("  Ana  ", " ANA@Email.com ", "senhaForte123"));
 
-        // ArgumentCaptor: "captura" o objeto passado ao save para inspecioná-lo
         ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
         verify(usuarioRepository).save(captor.capture());
         Usuario salvo = captor.getValue();
 
         assertThat(salvo.getNome()).isEqualTo("Ana");
         assertThat(salvo.getEmail()).isEqualTo("ana@email.com");
-        assertThat(salvo.getSenhaHash()).isEqualTo("hash-bcrypt"); // nunca a senha pura
+        assertThat(salvo.getSenhaHash()).isEqualTo("hash-bcrypt");
         assertThat(resposta.token()).isEqualTo("token-jwt");
         assertThat(resposta.tipo()).isEqualTo("Bearer");
         assertThat(resposta.expiraEmSegundos()).isEqualTo(3600L);
